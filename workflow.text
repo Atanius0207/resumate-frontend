@@ -1,0 +1,93 @@
+Project ResuMate {
+  database_type: 'MySQL'
+  Note: 'Platform CV Builder Profesional & ATS Friendly'
+}
+
+// 1. USERS: Menyimpan data pengguna dan admin
+Table users {
+  id integer [primary key, increment]
+  name varchar [not null]
+  email varchar [unique, not null]
+  password varchar [not null]
+  avatar varchar
+  role enum('admin', 'user') [default: 'user', note: 'Pemisah hak akses']
+  is_active boolean [default: true, note: 'Status aktif user']
+  is_premium boolean [default: false, note: 'Status keanggotaan user']
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+}
+
+// 2. CV TEMPLATES: Katalog desain yang dikelola Admin
+Table cv_templates {
+  id integer [primary key, increment]
+  name varchar [not null]
+  slug varchar [unique, note: 'Untuk URL SEO Friendly']
+  thumbnail varchar [note: 'Path gambar preview']
+  file_path varchar [note: 'Path file view blade']
+  description varchar [note: 'Untuk deskripsi']
+  category enum('professional', 'creative', 'simple', 'academic')
+  tags json [note: 'Untuk tags']
+  type enum('free', 'pro') [default: 'free']
+  price integer [default: 0]
+  
+  // Konfigurasi Form Dinamis
+  form_schema json [note: 'Admin mengatur field apa saja yang aktif di template ini. Contoh: {"photo": true, "social_media": false}']
+  
+  is_new boolean [note: 'Default true']
+  is_ats_friendly boolean [default: true]
+  is_active boolean [default: true]
+  total_downloads integer [default: 0]
+  rating decimal [default: 0.00]
+  created_at timestamp
+}
+
+// 3. RESUMES: Data CV milik User
+// Menggunakan JSON untuk 'content' agar struktur data fleksibel (Pengalaman, Edukasi, Skill, dll)
+Table resumes {
+  id integer [primary key, increment]
+  user_id integer [not null]
+  cv_template_id integer [not null]
+  title varchar [note: 'Nama file CV, misal: CV Lamaran BUMN']
+  
+  // Inti Data CV
+  content json [note: 'Menyimpan seluruh data user: Personal, Experience, Education, Skills, dll']
+  
+  photo varchar [note: 'Foto profil khusus CV ini']
+  status enum('draft', 'completed') [default: 'draft']
+  created_at timestamp
+  updated_at timestamp
+}
+
+// 4. TRANSACTIONS: Menangani pembayaran manual via WA
+Table transactions {
+  id integer [primary key, increment]
+  user_id integer [not null]
+  resume_id integer [null, note: 'Jika beli per-CV (Opsional)']
+  
+  // Detail Transaksi
+  transaction_code varchar [unique, note: 'Kode unik, misal: TRX-001']
+  amount integer [not null]
+  payment_method varchar [default: 'manual_transfer']
+  proof_of_payment varchar [note: 'Path gambar bukti transfer upload user']
+  
+  // Proses Verifikasi Admin
+  status enum('pending', 'approved', 'rejected') [default: 'pending']
+  admin_note text [note: 'Catatan jika ditolak']
+  verified_at timestamp
+  
+  created_at timestamp
+}
+
+// --- RELASI ANTAR TABEL ---
+
+// Seorang User bisa punya banyak Resume
+Ref: users.id < resumes.user_id [delete: cascade]
+
+// Sebuah Template bisa dipakai di banyak Resume
+Ref: cv_templates.id < resumes.cv_template_id [delete: cascade]
+
+// User bisa melakukan banyak Transaksi
+Ref: users.id < transactions.user_id
+
+// (Opsional) Transaksi bisa terikat ke satu Resume spesifik jika model bisnisnya "Bayar per Download"
+Ref: resumes.id < transactions.resume_id

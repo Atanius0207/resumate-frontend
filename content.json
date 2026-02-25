@@ -1,0 +1,32 @@
+{
+  "personal": {
+    "name": "Gani Gustio",
+    "job": "Laravel Developer",
+    "email": "gani@resumate.com",
+    "phone": "081234567890",
+    "summary": "Seorang pengembang web yang antusias dengan pengalaman 2 tahun menggunakan Laravel dan React. Memiliki passion dalam membangun aplikasi yang efisien dan user-friendly."
+  },
+  "experience": [
+    {
+      "company": "PT Teknologi Maju",
+      "role": "Junior Backend Developer",
+      "year": "2023 - Sekarang",
+      "description": "Bertanggung jawab memelihara API dan optimasi database MySQL."
+    },
+    {
+      "company": "CV Kreatif Digital",
+      "role": "Internship Web Dev",
+      "year": "2022 - 2023",
+      "description": "Membangun landing page menggunakan HTML, CSS, dan Bootstrap."
+    }
+  ],
+  "education": [
+    {
+      "school": "SMKN 1 Lintau Buo",
+      "degree": "Rekayasa Perangkat Lunak"
+    }
+  ],
+  "skills": {
+    "list": "PHP, Laravel, MySQL, JavaScript, Git, Tailwind CSS"
+  }
+}
