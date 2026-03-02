@@ -89,8 +89,12 @@
     })->name('reset-password');
 
     Route::get('/email-otp', function() {
-        return view('auth.emailotp');
+        return view('emails.emailotp');
     })->name('emailotp');
+
+    Route::get('/email-transaksi-tolak', function() {
+        return view('emails.email-rejected');
+    })->name('rejected-email');
 
     Route::get('/modal-test', function() {
         return view('auth.success');
